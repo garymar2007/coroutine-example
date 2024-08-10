@@ -5,7 +5,6 @@ import kotlinx.coroutines.*
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
-    // Using withContext to switch the context of the coroutine
     runBlocking {
         val bricksJob = launch(Dispatchers.Default) {
             perform("laying bricks")
@@ -14,6 +13,7 @@ fun main() {
         bricksJob.cancel()  //cancel the bricksJob coroutine from outside
         launch(Dispatchers.IO) {
             val windows = order(Product.WINDOWS)
+            throw Exception("Out of money!")
             bricksJob.join()
             withContext(Dispatchers.Default) {
                 perform("installing ${windows.description}")
@@ -23,13 +23,36 @@ fun main() {
         launch(Dispatchers.IO) {
             val doors = order(Product.DOORS)
             bricksJob.join()
-            cancel()    //cancels the install Doors coroutine from inside
             withContext(Dispatchers.Default) {
                 perform("installing ${doors.description}")
             }
         }
-        //cancel()    //cancels the coroutine for the entire scope
     }
+    // Using withContext to switch the context of the coroutine
+//    runBlocking {
+//        val bricksJob = launch(Dispatchers.Default) {
+//            perform("laying bricks")
+//        }
+//
+//        bricksJob.cancel()  //cancel the bricksJob coroutine from outside
+//        launch(Dispatchers.IO) {
+//            val windows = order(Product.WINDOWS)
+//            bricksJob.join()
+//            withContext(Dispatchers.Default) {
+//                perform("installing ${windows.description}")
+//            }
+//        }
+//
+//        launch(Dispatchers.IO) {
+//            val doors = order(Product.DOORS)
+//            bricksJob.join()
+//            cancel()    //cancels the install Doors coroutine from inside
+//            withContext(Dispatchers.Default) {
+//                perform("installing ${doors.description}")
+//            }
+//        }
+//        //cancel()    //cancels the coroutine for the entire scope
+//    }
 
     //Parallel execution of tasks
     // Dispatchers.IO is used to perform blocking IO operations of CPU-heavy tasks(scale
