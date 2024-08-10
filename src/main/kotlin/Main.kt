@@ -26,6 +26,7 @@ fun main() {
                 perform("installing ${doors.description}")
             }
         }
+        cancel()
     }
 
     //Parallel execution of tasks
@@ -91,9 +92,12 @@ fun main() {
 
 }
 
-fun perform(taskName: String) {
+suspend fun perform(taskName: String) {
     println("STARTING TASK   >>> $taskName")
-    Thread.sleep(1_000)
+    repeat(5) {
+        Thread.sleep(200)
+        yield()
+    }
     println("FINISHED TASK   >>> $taskName")
 }
 
