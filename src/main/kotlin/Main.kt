@@ -11,6 +11,7 @@ fun main() {
             perform("laying bricks")
         }
 
+        bricksJob.cancel()  //cancel the bricksJob coroutine from outside
         launch(Dispatchers.IO) {
             val windows = order(Product.WINDOWS)
             bricksJob.join()
@@ -22,11 +23,12 @@ fun main() {
         launch(Dispatchers.IO) {
             val doors = order(Product.DOORS)
             bricksJob.join()
+            cancel()    //cancels the install Doors coroutine from inside
             withContext(Dispatchers.Default) {
                 perform("installing ${doors.description}")
             }
         }
-        cancel()
+        //cancel()    //cancels the coroutine for the entire scope
     }
 
     //Parallel execution of tasks
