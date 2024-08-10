@@ -1,23 +1,37 @@
 package org.gary
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.*
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
-
+    //Parallel execution of tasks
+    // Dispatchers.IO is used to perform blocking IO operations of CPU-heavy tasks(scale
+    // up the number of threads to 64 threads by default)
+    //
+    //
+    // Dispatchers.Default is used to perform IO-heavy tasks (thread pool containing
+    // the number of threads equal to the number of CPU cores)
     runBlocking {
-        val windows = async { order(Product.WINDOWS) }
-        val doors = async { order(Product.DOORS) }
-        launch {
+        val windows = async(Dispatchers.IO) { order(Product.WINDOWS) }
+        val doors = async(Dispatchers.IO) { order(Product.DOORS) }
+        launch(Dispatchers.Default) {
             perform("laying bricks")
-            perform("installing ${windows.await().description}")
-            perform("installing ${doors.await().description}")
+            launch { perform("installing ${windows.await().description}") }
+            launch { perform("installing ${doors.await().description}") }
         }
     }
+
+    //concurrent execution of tasks
+//    runBlocking {
+//        val windows = async { order(Product.WINDOWS) }
+//        val doors = async { order(Product.DOORS) }
+//        launch {
+//            perform("laying bricks")
+//            perform("installing ${windows.await().description}")
+//            perform("installing ${doors.await().description}")
+//        }
+//    }
 
 //    runBlocking{
 //        runBlocking {
