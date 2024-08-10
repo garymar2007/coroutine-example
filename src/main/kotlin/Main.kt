@@ -1,5 +1,6 @@
 package org.gary
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
@@ -7,13 +8,14 @@ import kotlinx.coroutines.yield
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
+
     runBlocking {
-        val windows = launch { order(Product.WINDOWS) }
-        val doors = launch { order(Product.DOORS) }
+        val windows = async { order(Product.WINDOWS) }
+        val doors = async { order(Product.DOORS) }
         launch {
             perform("laying bricks")
-            perform("installing ${windows.description}")
-            perform("installing ${doors.description}")
+            perform("installing ${windows.await().description}")
+            perform("installing ${doors.await().description}")
         }
     }
 

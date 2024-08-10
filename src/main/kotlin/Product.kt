@@ -9,7 +9,7 @@ enum class Product(val description: String, val deliveryTime: Long) {
 
 suspend fun order(item: Product) : Product {
     println("ORDER EN ROUTE  >>> The ${item.description} are on the way!")
-    delay(item.deliveryTime)
+    delay(item.deliveryTime)    // suspending function delay - allowing other coroutines to run
     println("ORDER DELIVERED >>> Your ${item.description} have arrived.")
     return item
 }
